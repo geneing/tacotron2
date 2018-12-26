@@ -80,23 +80,11 @@ class STFT(torch.nn.Module):
 
         self.num_samples = num_samples
 
-        # similar to librosa, reflect-pad the input
-        input_data = input_data.view(num_batches, 1, num_samples)
-        input_data = F.pad(
-            input_data.unsqueeze(1),
-            (int(self.filter_length / 2), int(self.filter_length / 2), 0, 0),
-            mode='reflect')
-        input_data = input_data.squeeze(1)
+        forward_transform = torch.stft(input_data, self.filter_length, self.hop_length, self.win_length,
+                                       torch.hann_window(self.win_length), pad_mode='reflect')
 
-        forward_transform = F.conv1d(
-            input_data,
-            Variable(self.forward_basis, requires_grad=False),
-            stride=self.hop_length,
-            padding=0)
-
-        cutoff = int((self.filter_length / 2) + 1)
-        real_part = forward_transform[:, :cutoff, :]
-        imag_part = forward_transform[:, cutoff:, :]
+        real_part = forward_transform[:, :, :, 0]
+        imag_part = forward_transform[:, :, :, 1]
 
         magnitude = torch.sqrt(real_part**2 + imag_part**2)
         phase = torch.autograd.Variable(

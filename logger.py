@@ -1,8 +1,8 @@
 import random
 import torch.nn.functional as F
 from tensorboardX import SummaryWriter
-from plotting_utils import plot_alignment_to_numpy, plot_spectrogram_to_numpy
-from plotting_utils import plot_gate_outputs_to_numpy
+from plotting_utils import plot_alignment_to_figure, plot_spectrogram_to_figure
+from plotting_utils import plot_gate_outputs_to_figure
 
 
 class Tacotron2Logger(SummaryWriter):
@@ -28,21 +28,21 @@ class Tacotron2Logger(SummaryWriter):
 
         # plot alignment, mel target and predicted, gate target and predicted
         idx = random.randint(0, alignments.size(0) - 1)
-        self.add_image(
+        self.add_figure(
             "alignment",
-            plot_alignment_to_numpy(alignments[idx].data.cpu().numpy().T),
+            plot_alignment_to_figure(alignments[idx].data.cpu().numpy().T),
             iteration)
-        self.add_image(
+        self.add_figure(
             "mel_target",
-            plot_spectrogram_to_numpy(mel_targets[idx].data.cpu().numpy()),
+            plot_spectrogram_to_figure(mel_targets[idx].data.cpu().numpy()),
             iteration)
-        self.add_image(
+        self.add_figure(
             "mel_predicted",
-            plot_spectrogram_to_numpy(mel_outputs[idx].data.cpu().numpy()),
+            plot_spectrogram_to_figure(mel_outputs[idx].data.cpu().numpy()),
             iteration)
-        self.add_image(
+        self.add_figure(
             "gate",
-            plot_gate_outputs_to_numpy(
+            plot_gate_outputs_to_figure(
                 gate_targets[idx].data.cpu().numpy(),
                 F.sigmoid(gate_outputs[idx]).data.cpu().numpy()),
             iteration)

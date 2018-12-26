@@ -11,7 +11,7 @@ def save_figure_to_numpy(fig):
     return data
 
 
-def plot_alignment_to_numpy(alignment, info=None):
+def plot_alignment_to_figure(alignment, info=None):
     fig, ax = plt.subplots(figsize=(6, 4))
     im = ax.imshow(alignment, aspect='auto', origin='lower',
                    interpolation='none')
@@ -22,14 +22,11 @@ def plot_alignment_to_numpy(alignment, info=None):
     plt.xlabel(xlabel)
     plt.ylabel('Encoder timestep')
     plt.tight_layout()
-
     fig.canvas.draw()
-    data = save_figure_to_numpy(fig)
-    plt.close()
-    return data
+    return fig
 
 
-def plot_spectrogram_to_numpy(spectrogram):
+def plot_spectrogram_to_figure(spectrogram):
     fig, ax = plt.subplots(figsize=(12, 3))
     im = ax.imshow(spectrogram, aspect="auto", origin="lower",
                    interpolation='none')
@@ -39,12 +36,10 @@ def plot_spectrogram_to_numpy(spectrogram):
     plt.tight_layout()
 
     fig.canvas.draw()
-    data = save_figure_to_numpy(fig)
-    plt.close()
-    return data
+    return fig
 
 
-def plot_gate_outputs_to_numpy(gate_targets, gate_outputs):
+def plot_gate_outputs_to_figure(gate_targets, gate_outputs):
     fig, ax = plt.subplots(figsize=(12, 3))
     ax.scatter(range(len(gate_targets)), gate_targets, alpha=0.5,
                color='green', marker='+', s=1, label='target')
@@ -56,6 +51,4 @@ def plot_gate_outputs_to_numpy(gate_targets, gate_outputs):
     plt.tight_layout()
 
     fig.canvas.draw()
-    data = save_figure_to_numpy(fig)
-    plt.close()
-    return data
+    return fig
