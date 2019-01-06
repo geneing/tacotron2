@@ -138,7 +138,7 @@ class LPCNetLoader(torch.utils.data.Dataset):
         filename = filename.replace("DUMMY", self.input_path)
         features = np.fromfile(filename, dtype='float32')
         features = np.reshape(features, (-1, self.nb_features))
-        features = features[:,self.idx_features]
+        features = features[:,self.idx_features].T
         lpcfeatures = torch.from_numpy(features)
         return lpcfeatures
 
