@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from fp16_optimizer import FP16_Optimizer
 
 from model import Tacotron2
-from data_utils import TextMelLoader, TextMelCollate
+from data_utils import TextMelLoader, TextMelCollate, LPCNetCollate, LPCNetLoader
 from loss_function import Tacotron2Loss
 from logger import Tacotron2Logger
 from hparams import create_hparams
@@ -53,9 +53,15 @@ def init_distributed(hparams, n_gpus, rank, group_name):
 
 def prepare_dataloaders(hparams):
     # Get data, data loaders and collate function ready
-    trainset = TextMelLoader(hparams.training_files, hparams)
-    valset = TextMelLoader(hparams.validation_files, hparams)
-    collate_fn = TextMelCollate(hparams.n_frames_per_step)
+
+    if hparams.input_type=='lpcnet':
+        trainset = LPCNetLoader(hparams.training_files, hparams)
+        valset = LPCNetLoader(hparams.validation_files, hparams)
+        collate_fn = LPCNetCollate(hparams.n_frames_per_step)
+    else:
+        trainset = TextMelLoader(hparams.training_files, hparams)
+        valset = TextMelLoader(hparams.validation_files, hparams)
+        collate_fn = TextMelCollate(hparams.n_frames_per_step)
 
     train_sampler = DistributedSampler(trainset) \
         if hparams.distributed_run else None
@@ -253,6 +259,8 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--input_dir', type=str,
+                        required=True, help='path to the directory containing features .f32 files')
     parser.add_argument('-o', '--output_directory', type=str,
                         help='directory to save checkpoints')
     parser.add_argument('-l', '--log_directory', type=str,
@@ -269,7 +277,6 @@ if __name__ == '__main__':
                         required=False, help='Distributed group name')
     parser.add_argument('--hparams', type=str,
                         required=False, help='comma separated name=value pairs')
-
     args = parser.parse_args()
     hparams = create_hparams(args.hparams)
 
@@ -281,6 +288,7 @@ if __name__ == '__main__':
     print("Distributed Run:", hparams.distributed_run)
     print("cuDNN Enabled:", hparams.cudnn_enabled)
     print("cuDNN Benchmark:", hparams.cudnn_benchmark)
-
+    print("Input Directory:", args.input_dir)
+    hparams.input_dir = args.input_dir
     train(args.output_directory, args.log_directory, args.checkpoint_path,
           args.warm_start, args.n_gpus, args.rank, args.group_name, hparams)

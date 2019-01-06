@@ -23,20 +23,23 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         # Data Parameters             #
         ################################
+        input_type='lpcnet',
+
         load_mel_from_disk=False,
         training_files='filelists/ljs_audio_text_train_filelist.txt',
         validation_files='filelists/ljs_audio_text_val_filelist.txt',
         text_cleaners=['english_cleaners'],
 
+
         ################################
         # Audio Parameters             #
         ################################
         max_wav_value=32768.0,
-        sampling_rate=22050,
+        sampling_rate=16000, #lpcnet vocoder is trained on 16kHz data
         filter_length=1024,
-        hop_length=256,
+        hop_length=160,     #lpcnet uses 10ms hop, sampling rate is 16kHz
         win_length=1024,
-        n_mel_channels=80,
+        n_mel_channels=19,  #lpcnet features are 18 barkscale coefficients and pitch
         mel_fmin=0.0,
         mel_fmax=8000.0,
 
@@ -73,7 +76,10 @@ def create_hparams(hparams_string=None, verbose=False):
         postnet_kernel_size=5,
         postnet_n_convolutions=5,
 
-        ################################
+        # LPCNet parameters
+        nb_features=55,  #has to be the same as in lpcnet vocoder feature count
+
+    ################################
         # Optimization Hyperparameters #
         ################################
         use_saved_learning_rate=False,
