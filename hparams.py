@@ -39,7 +39,7 @@ def create_hparams(hparams_string=None, verbose=False):
         filter_length=1024,
         hop_length=160,     #lpcnet uses 10ms hop, sampling rate is 16kHz
         win_length=1024,
-        n_mel_channels=19,  #lpcnet features are 18 barkscale coefficients and pitch
+        n_mel_channels=20,  #lpcnet features are 18 barkscale coefficients and pitch and gain
         mel_fmin=0.0,
         mel_fmax=8000.0,
 
@@ -58,7 +58,7 @@ def create_hparams(hparams_string=None, verbose=False):
         n_frames_per_step=1,  # currently only 1 is supported
         decoder_rnn_dim=1024,
         prenet_dim=256,
-        max_decoder_steps=1000,
+        max_decoder_steps=10000,
         gate_threshold=0.5,
         p_attention_dropout=0.1,
         p_decoder_dropout=0.1,

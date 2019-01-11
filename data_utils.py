@@ -122,7 +122,7 @@ class LPCNetLoader(torch.utils.data.Dataset):
         self.text_cleaners = hparams.text_cleaners
         self.load_mel_from_disk = hparams.load_mel_from_disk
         self.nb_features = hparams.nb_features
-        self.idx_features = np.hstack([np.arange(0,18),36])  #lpcnet features that are actually used for synthesis.
+        self.idx_features = np.hstack([np.arange(0,18),36,37])  #lpcnet features that are actually used for synthesis.
         self.input_path = hparams.input_dir
         random.seed(1234)
         random.shuffle(self.audiopaths_and_text)
